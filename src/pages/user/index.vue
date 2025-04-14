@@ -1,6 +1,6 @@
 <template>
   <view class="profile-container">
-    <view class="profile-header">
+    <views class="profile-header">
       <view class="profile-avatar" @click="handleLogin">
         <image class="avatar" :src="userInfo.avatar || '/static/images/avatar-default.png'" mode="aspectFill"></image>
       </view>
@@ -8,7 +8,7 @@
         <view class="profile-name">{{ userInfo.nickname || "点击登录" }}</view>
         <view class="profile-id">{{ userInfo.desc || "登录后享受更多功能" }}</view>
       </view>
-      <view class="profile-edit">编辑</view></view
+      <view class="profile-edit">编辑</view></views
     >
     <view class="profile-stats">
       <view class="profile-stat">
@@ -52,7 +52,10 @@ const userInfo = ref({
 const loginDialog = ref(null);
 
 const handleLogin = () => {
-  loginDialog.value.show();
+  // loginDialog.value.show();
+  uni.navigateTo({
+    url: "/pages/login/index",
+  })
 };
 
 const handleLoginSuccess = userData => {
