@@ -14,4 +14,13 @@ export default {
 
 <style>
 @import "@/static/iconfont/iconfont.css";
+.page {
+  padding: 15px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.page.active {
+  display: block;
+}
 </style>

@@ -1,4 +1,9 @@
-{
+{	"easycom": {
+      "autoscan": true,
+      "custom": {
+        "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+      }
+  },
   "pages": [
     {
       "path": "pages/index/index",
@@ -34,6 +39,54 @@
       "path": "pages/user/index",
       "style": {
         "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/user/orders/index",
+      "style": {
+        "navigationBarTitleText": "我的订单"
+      }
+    },
+    {
+      "path": "pages/user/orders/detail",
+      "style": {
+        "navigationBarTitleText": "订单详情"
+      }
+    },
+    {
+      "path": "pages/user/orders/logistics",
+      "style": {
+        "navigationBarTitleText": "物流信息"
+      }
+    },
+    {
+      "path": "pages/user/footprint/index",
+      "style": {
+        "navigationBarTitleText": "我的足迹"
+      }
+    },
+    {
+      "path": "pages/user/favorites/index",
+      "style": {
+        "navigationBarTitleText": "我的收藏"
+      }
+    },
+    {
+      "path": "pages/user/digitalCollection/index",
+      "style": {
+        "navigationBarTitleText": "我的数字藏品"
+      }
+    },
+    {
+      "path": "pages/user/wallet/index",
+      "style": {
+        "navigationBarTitleText": "我的钱包"
+      }
+    },
+    {
+      "path": "pages/user/settings/index",
+      "style": {
+        "navigationBarTitleText": "设置"
       }
     }
   ],

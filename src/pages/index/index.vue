@@ -26,53 +26,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { recommendList, navList } from "./data/homeData";
 import YCard from "@/components/home/y-card.vue";
 
-const recommendList = ref([
-  {
-    cover: "/static/images/bamboo1.jpg",
-    title: "竹簧工艺",
-    description: "江安竹簧技艺的前世今生",
-  },
-]);
-const navList = ref([
-  {
-    id: 1,
-    title: "印记",
-    icon: "印",
-    description: "探寻竹簧历史文化",
-    url: "/pages/history/index",
-  },
-  {
-    id: 2,
-    title: "足迹",
-    icon: "足",
-    description: "非遗传承人足迹",
-    url: "/pages/footprint/index",
-  },
-  {
-    id: 3,
-    title: "艺圈",
-    icon: "艺",
-    description: "技艺展示与交流",
-    url: "/pages/art/index",
-  },
-  {
-    id: 4,
-    title: "商城",
-    icon: "商",
-    description: "文创作品与周边",
-    url: "/pages/shop/index",
-  },
-]);
 const goTOPage = data => {
-  if(data.id!=2)
+  if (data.id != 2)
     uni.switchTab({
-      url:data.url
+      url: data.url,
     });
-  else
-   uni.navigateTo({ url: data.url })
+  else uni.navigateTo({ url: data.url });
 };
 </script>
 
