@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "appid": "wxde4f1cf83ad3c777",
+  "name": "bamboo-mini",
+  "appid": "",
   "description": "",
   "versionName": "1.0.0",
   "versionCode": "100",
@@ -28,16 +28,13 @@
           "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
           "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
           "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
-          "<uses-feature android:name=\"android.hardware.camera.autofocus\"/>",
           "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
-          "<uses-permission android:name=\"android.permission.CAMERA\"/>",
-          "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
           "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
-          "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
-          "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
-          "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
-          "<uses-feature android:name=\"android.hardware.camera\"/>",
-          "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+          "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
+          "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+          "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
+          "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
+          "<uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\"/>"
         ]
       },
       /* ios打包配置 */
@@ -53,10 +50,12 @@
     "appid": "",
     "setting": {
       "urlCheck": false,
-      "ignoreDevUnusedFiles": false,
-      "ignoreUploadUnusedFiles": false
+      "es6": true,
+      "postcss": true,
+      "minified": true
     },
-    "usingComponents": true
+    "usingComponents": true,
+    "permission": {}
   },
   "mp-alipay": {
     "usingComponents": true
@@ -70,5 +69,22 @@
   "uniStatistics": {
     "enable": false
   },
-  "vueVersion": "3"
+  "vueVersion": "3",
+  "h5": {
+    "router": {
+      "mode": "hash",
+      "base": "/"
+    },
+    "devServer": {
+      "port": 8080,
+      "disableHostCheck": true,
+      "proxy": {
+        "/api": {
+          "target": "http://localhost:3000",
+          "changeOrigin": true,
+          "ws": true
+        }
+      }
+    }
+  }
 }

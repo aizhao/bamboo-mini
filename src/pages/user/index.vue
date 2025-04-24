@@ -52,10 +52,9 @@ const userInfo = ref({
 const loginDialog = ref(null);
 
 const handleLogin = () => {
-  // loginDialog.value.show();
   uni.navigateTo({
     url: "/pages/login/index",
-  })
+  });
 };
 
 const handleLoginSuccess = userData => {

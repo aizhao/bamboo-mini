@@ -95,6 +95,19 @@
       "style": {
         "navigationBarTitleText": "设置"
       }
+    },
+    {
+      "path": "pages/shop/detail",
+      "name": "detail",
+      "style": {
+        "navigationBarTitleText": "详情"
+      }
+    },
+    {
+      "path": "pages/shop/view3d",
+      "style": {
+        "navigationBarTitleText": "3d模型"
+      }
     }
   ],
   "globalStyle": {
