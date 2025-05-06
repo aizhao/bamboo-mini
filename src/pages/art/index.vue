@@ -84,167 +84,194 @@
         </view>
       </view>
     </uni-popup>
+
+    <!-- 评论弹窗 -->
+    <uni-popup ref="commentPopup" type="bottom">
+      <view class="comment-popup">
+        <view class="popup-header">
+          <text class="cancel" @click="closeCommentPopup">取消</text>
+          <text class="title">发表评论</text>
+          <text class="submit" @click="submitComment">发布</text>
+        </view>
+        <view class="popup-content">
+          <textarea class="comment-textarea" v-model="commentContent" placeholder="请输入评论内容..." maxlength="500"></textarea>
+        </view>
+      </view>
+    </uni-popup>
   </view>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      moments: [
-        {
-          user: {
-            avatar: "/static/images/avatars/user1.png",
-            nickname: "竹艺大师",
-          },
-          time: "2小时前",
-          content: "今天完成了一件竹编花瓶，采用了传统的六角编织法，耗时3天，效果还不错！",
-          media: [
-            {
-              type: "image",
-              url: "/static/images/art/work1.jpg",
-            },
-            {
-              type: "image",
-              url: "/static/images/art/work2.jpg",
-            },
-          ],
-          location: "江安竹簧工艺馆",
-          likes: 24,
-          isLiked: false,
-          comments: [
-            {
-              user: "竹艺爱好者",
-              content: "太精美了！请问可以定制吗？",
-            },
-            {
-              user: "传统工艺传承人",
-              content: "六角编织法确实经典，细节处理得很到位！",
-            },
-          ],
-        },
-        {
-          user: {
-            avatar: "/static/images/avatars/user2.png",
-            nickname: "竹编新手",
-          },
-          time: "昨天",
-          content: "第一次尝试竹编，虽然有点粗糙，但很有成就感！继续努力💪",
-          media: [
-            {
-              type: "video",
-              url: "/static/videos/art/work1.mp4",
-              cover: "/static/images/art/video-cover1.jpg",
-            },
-          ],
-          location: "家中工作室",
-          likes: 15,
-          isLiked: true,
-          comments: [
-            {
-              user: "竹艺导师",
-              content: "第一次就能做成这样很不错了，加油！",
-            },
-          ],
-        },
-      ],
-      postContent: "",
-      postMedia: [],
-    };
-  },
-  methods: {
-    handlePost() {
-      this.$refs.postPopup.open();
-    },
-    closePostPopup() {
-      this.$refs.postPopup.close();
-      this.postContent = "";
-      this.postMedia = [];
-    },
-    async chooseMedia() {
-      try {
-        const res = await uni.chooseMedia({
-          count: 9 - this.postMedia.length,
-          mediaType: ["image", "video"],
-          sourceType: ["album", "camera"],
-          camera: "back",
-        });
+<script setup>
+import { ref, onMounted } from "vue";
+import { getDynamic, addComment } from "../../api/dynamic/index";
 
-        res.tempFiles.forEach(file => {
-          this.postMedia.push({
-            type: file.fileType.includes("image") ? "image" : "video",
-            url: file.tempFilePath,
-            cover: file.thumbTempFilePath,
-          });
-        });
-      } catch (error) {
-        console.error("选择媒体失败:", error);
+const moments = ref([]);
+const postContent = ref("");
+const postMedia = ref([]);
+const postPopup = ref(null);
+const commentPopup = ref(null);
+const commentContent = ref("");
+const currentDynamicId = ref(null);
+
+// 获取动态列表
+const fetchDynamicList = async () => {
+  try {
+    const res = await getDynamic();
+    if (res.data) {
+      moments.value = res.data.list;
+    }
+  } catch (error) {
+    console.error("获取动态列表失败:", error);
+    uni.showToast({
+      title: "获取动态列表失败",
+      icon: "none",
+    });
+  }
+};
+
+const handlePost = () => {
+  postPopup.value.open();
+};
+
+const closePostPopup = () => {
+  postPopup.value.close();
+  postContent.value = "";
+  postMedia.value = [];
+};
+
+const chooseMedia = async () => {
+  try {
+    const res = await uni.chooseMedia({
+      count: 9 - postMedia.value.length,
+      mediaType: ["image", "video"],
+      sourceType: ["album", "camera"],
+      camera: "back",
+    });
+
+    res.tempFiles.forEach(file => {
+      postMedia.value.push({
+        type: file.fileType.includes("image") ? "image" : "video",
+        url: file.tempFilePath,
+        cover: file.thumbTempFilePath,
+      });
+    });
+  } catch (error) {
+    console.error("选择媒体失败:", error);
+  }
+};
+
+const deleteMedia = index => {
+  postMedia.value.splice(index, 1);
+};
+
+const submitPost = () => {
+  if (!postContent.value && postMedia.value.length === 0) {
+    uni.showToast({
+      title: "请输入内容或上传媒体",
+      icon: "none",
+    });
+    return;
+  }
+
+  const newMoment = {
+    user: {
+      avatar: "/static/images/avatar-default.png",
+      nickname: "我",
+    },
+    time: "刚刚",
+    content: postContent.value,
+    media: [...postMedia.value],
+    location: "江安竹簧工艺馆",
+    likes: 0,
+    isLiked: false,
+    comments: [],
+  };
+
+  moments.value.unshift(newMoment);
+  closePostPopup();
+
+  uni.showToast({
+    title: "发布成功",
+    icon: "success",
+  });
+};
+
+const previewMedia = (media, mediaList) => {
+  if (media.type === "image") {
+    uni.previewImage({
+      urls: mediaList.filter(m => m.type === "image").map(m => m.url),
+      current: media.url,
+    });
+  } else if (media.type === "video") {
+    uni.navigateTo({
+      url: `/pages/common/video-player?url=${encodeURIComponent(media.url)}`,
+    });
+  }
+};
+
+const handleLike = item => {
+  item.isLiked = !item.isLiked;
+  item.likes += item.isLiked ? 1 : -1;
+};
+
+const handleComment = item => {
+  currentDynamicId.value = item.id;
+  commentContent.value = "";
+  commentPopup.value.open();
+};
+
+const closeCommentPopup = () => {
+  commentPopup.value.close();
+  commentContent.value = "";
+  currentDynamicId.value = null;
+};
+
+const submitComment = async () => {
+  if (!commentContent.value.trim()) {
+    uni.showToast({
+      title: "请输入评论内容",
+      icon: "none",
+    });
+    return;
+  }
+
+  try {
+    const res = await addComment(currentDynamicId.value, {
+      content: commentContent.value,
+    });
+
+    if (res.data) {
+      // 更新评论列表
+      const dynamic = moments.value.find(item => item.id === currentDynamicId.value);
+      if (dynamic) {
+        dynamic.comments.push(res.data);
       }
-    },
-    deleteMedia(index) {
-      this.postMedia.splice(index, 1);
-    },
-    submitPost() {
-      if (!this.postContent && this.postMedia.length === 0) {
-        uni.showToast({
-          title: "请输入内容或上传媒体",
-          icon: "none",
-        });
-        return;
-      }
-
-      const newMoment = {
-        user: {
-          avatar: "/static/images/avatar-default.png",
-          nickname: "我",
-        },
-        time: "刚刚",
-        content: this.postContent,
-        media: [...this.postMedia],
-        location: "江安竹簧工艺馆",
-        likes: 0,
-        isLiked: false,
-        comments: [],
-      };
-
-      this.moments.unshift(newMoment);
-      this.closePostPopup();
 
       uni.showToast({
-        title: "发布成功",
+        title: "评论成功",
         icon: "success",
       });
-    },
-    previewMedia(media, mediaList) {
-      if (media.type === "image") {
-        uni.previewImage({
-          urls: mediaList.filter(m => m.type === "image").map(m => m.url),
-          current: media.url,
-        });
-      } else if (media.type === "video") {
-        uni.navigateTo({
-          url: `/pages/common/video-player?url=${encodeURIComponent(media.url)}`,
-        });
-      }
-    },
-    handleLike(item) {
-      item.isLiked = !item.isLiked;
-      item.likes += item.isLiked ? 1 : -1;
-    },
-    handleComment(item) {
-      uni.showToast({
-        title: "评论功能开发中",
-        icon: "none",
-      });
-    },
-    handleShare(item) {
-      uni.showToast({
-        title: "分享功能开发中",
-        icon: "none",
-      });
-    },
-  },
+      closeCommentPopup();
+    }
+  } catch (error) {
+    console.error("发表评论失败:", error);
+    uni.showToast({
+      title: "发表评论失败",
+      icon: "none",
+    });
+  }
 };
+
+const handleShare = item => {
+  uni.showToast({
+    title: "分享功能开发中",
+    icon: "none",
+  });
+};
+
+onMounted(() => {
+  fetchDynamicList();
+});
 </script>
 
 <style scoped>
@@ -516,5 +543,44 @@ export default {
 .upload-icon {
   font-size: 60rpx;
   color: #999;
+}
+
+.comment-popup {
+  background-color: #fff;
+  border-radius: 30rpx 30rpx 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.comment-popup .popup-header {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.comment-popup .cancel,
+.comment-popup .submit {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.comment-popup .title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.comment-popup .submit {
+  color: #5a8d69;
+}
+
+.comment-popup .popup-content {
+  padding: 30rpx;
+}
+
+.comment-popup .comment-textarea {
+  width: 100%;
+  height: 200rpx;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 30rpx;
 }
 </style>

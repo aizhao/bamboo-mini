@@ -1,15 +1,15 @@
 <template>
   <view class="profile-container">
-    <views class="profile-header">
+    <view class="profile-header">
       <view class="profile-avatar" @click="handleLogin">
-        <image class="avatar" :src="userInfo.avatar || '/static/images/avatar-default.png'" mode="aspectFill"></image>
+        <image class="profile-avatar" :src="userInfo.avatar" mode="aspectFill"></image>
       </view>
-      <view class="profile-info">
+      <view class="profile-info" @click="handleLogin">
         <view class="profile-name">{{ userInfo.nickname || "点击登录" }}</view>
-        <view class="profile-id">{{ userInfo.desc || "登录后享受更多功能" }}</view>
+        <view class="profile-id" v-if="!token">登录后享受更多功能</view>
       </view>
-      <view class="profile-edit">编辑</view></views
-    >
+      <view class="profile-edit">编辑</view>
+    </view>
     <view class="profile-stats">
       <view class="profile-stat">
         <view class="profile-stat-value">12</view>
@@ -32,17 +32,21 @@
           <view class="profile-menu-desc">{{ item.desc }}</view>
         </view>
         <view class="profile-menu-arrow">></view>
-      </view></view
-    >
+      </view>
+      <button type="warn" @click="logout" v-if="token">退出登录</button>
+    </view>
     <login-dialog ref="loginDialog" @login-success="handleLoginSuccess"></login-dialog>
   </view>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { onShow } from "@dcloudio/uni-app";
 import LoginDialog from "./components/LoginDialog.vue";
 import { menuList } from "./data/user";
+import { getToken, getUser, removeToken } from "../../utils/auth";
 
+const token = ref(null);
 const userInfo = ref({
   avatar: "",
   nickname: "",
@@ -52,13 +56,64 @@ const userInfo = ref({
 const loginDialog = ref(null);
 
 const handleLogin = () => {
-  uni.navigateTo({
-    url: "/pages/login/index",
-  });
+  if (!token.value) {
+    uni.navigateTo({
+      url: "/pages/login/index",
+    });
+  } else {
+    // 选择图片
+    uni.chooseImage({
+      count: 1,
+      sizeType: ["compressed"],
+      sourceType: ["album", "camera"],
+      success: async res => {
+        const tempFilePath = res.tempFilePaths[0];
+
+        try {
+          // 上传图片
+          const uploadRes = await uni.uploadFile({
+            url: "/api/user/avatar",
+            filePath: tempFilePath,
+            name: "avatar",
+            header: {
+              Authorization: `Bearer ${token.value}`,
+            },
+          });
+
+          const result = JSON.parse(uploadRes.data);
+
+          if (result.code === 0) {
+            // 更新用户信息
+            userInfo.value = {
+              ...userInfo.value,
+              avatar: result.data.url,
+            };
+
+            uni.showToast({
+              title: "头像更新成功",
+              icon: "success",
+            });
+          } else {
+            uni.showToast({
+              title: result.message || "上传失败",
+              icon: "none",
+            });
+          }
+        } catch (error) {
+          console.error("上传头像失败:", error);
+          uni.showToast({
+            title: "上传失败",
+            icon: "none",
+          });
+        }
+      },
+    });
+  }
 };
 
 const handleLoginSuccess = userData => {
-  userInfo.value = userData;
+  userInfo.value = { ...userData };
+  token.value = getToken();
 };
 
 const handleMenuClick = url => {
@@ -66,6 +121,35 @@ const handleMenuClick = url => {
     url: url,
   });
 };
+
+const logout = () => {
+  removeToken();
+  token.value = null;
+  userInfo.value = {
+    avatar: "",
+    nickname: "",
+    desc: "",
+  };
+};
+
+const init = () => {
+  token.value = getToken();
+  if (token.value) {
+    const user = getUser();
+    if (user) {
+      userInfo.value = { ...user };
+    }
+  }
+};
+
+onMounted(() => {
+  init();
+});
+
+// 添加页面显示时的处理
+onShow(() => {
+  init();
+});
 </script>
 
 <style>
@@ -99,7 +183,10 @@ const handleMenuClick = url => {
   font-size: 18px;
   margin-bottom: 5px;
 }
-
+.profile-logout {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
 .profile-id {
   font-size: 12px;
   opacity: 0.8;

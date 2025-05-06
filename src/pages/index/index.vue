@@ -4,6 +4,7 @@
       <!-- 顶部标题 -->
       <!-- 主图区域 -->
       <view class="banner">
+        <image style="height: 200px; width: 100%" :src="url" mode="scaleToFill" />
         <text class="banner-text">江安竹簧非遗文化</text>
       </view>
 
@@ -28,7 +29,8 @@
 <script setup>
 import { recommendList, navList } from "./data/homeData";
 import YCard from "@/components/home/y-card.vue";
-
+import { ref } from "vue";
+const url = ref("https://bamboo-mini.oss-cn-hangzhou.aliyuncs.com/content/W020241024348368380677_ORIGIN.png");
 const goTOPage = data => {
   if (data.id != 2)
     uni.switchTab({
@@ -69,9 +71,9 @@ const goTOPage = data => {
 .banner {
   width: 100%;
   height: 200px;
-  background: linear-gradient(135deg, #91a967, #5a8d69);
+  /* background: linear-gradient(135deg, #91a967, #5a8d69); */
   border-radius: 10px;
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;

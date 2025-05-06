@@ -1,24 +1,34 @@
 <template>
-  <view class="article-card">
-    <view class="article-img"></view>
+  <view class="article-card" @click="handleClick">
+    <view class="article-img">
+      <image style="width: 100%; height: 200px" :src="dataList.cover_image"></image>
+    </view>
     <view class="article-content">
       <view class="article-title">{{ dataList.title }}</view>
-      <view class="article-desc">{{ dataList.desc }}</view>
+      <view class="article-desc">{{ dataList.content }}</view>
       <view class="article-meta">
-        <span>阅读 {{ dataList.read }}</span>
-        <span>{{ dataList.time }}</span>
+        <span>阅读 {{ dataList.review_comment }}</span>
+        <span>{{ dataList.create_time }}</span>
       </view>
     </view>
   </view>
 </template>
 
 <script setup>
+import { ref } from "vue";
+
 const props = defineProps({
   dataList: {
     type: Object,
     default: () => {},
   },
 });
+
+const handleClick = () => {
+  uni.navigateTo({
+    url: `/pages/history/detail?id=${props.dataList.id}`,
+  });
+};
 </script>
 
 <style>
@@ -39,9 +49,7 @@ const props = defineProps({
 
 .article-img {
   width: 100%;
-  height: 150px;
-  background-color: #eee;
-  background-image: linear-gradient(45deg, #91a967, #5a8d69);
+  height: 200px;
   position: relative;
   transition: all 0.3s ease;
 }
@@ -75,6 +83,11 @@ const props = defineProps({
   font-size: 14px;
   color: #666;
   margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .article-meta {

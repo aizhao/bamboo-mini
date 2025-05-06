@@ -32,7 +32,7 @@
 
 <script>
 import { phoneLogin, accountLogin } from "@/api/auth";
-import { setToken, getToken } from "@/utils/auth";
+import { setToken, getToken, setUser, removeToken, getUser } from "@/utils/auth";
 
 export default {
   data() {
@@ -46,14 +46,13 @@ export default {
   },
   onLoad() {
     // 获取微信登录code
-    this.getWxCode();
+    // this.getWxCode();
 
     // 检查是否已登录
+    // removeToken();
     const token = getToken();
-    console.log("登录页面 - 检查token:", token ? "已存在" : "不存在");
-
+    // removeToken();
     if (token) {
-      console.log("登录页面 - 已有token，跳转到首页");
       uni.switchTab({
         url: "/pages/index/index",
       });
@@ -87,24 +86,20 @@ export default {
       }
 
       try {
-        console.log("登录页面 - 开始登录，用户名:", this.form.username);
         const res = await accountLogin(this.form);
-        console.log("登录页面 - 登录响应:", res);
 
         if (res.code === 0 && res.data.token) {
           // 保存token
           const token = res.data.token;
-          console.log("登录页面 - 登录成功，保存token:", token);
 
           // 保存token
           setToken(token);
-
+          setUser(res.data.user.nickname, res.data.user.avatar);
+          // console.log(getUser(), "7777");
           // 验证token是否保存成功
           const savedToken = getToken();
-          console.log("登录页面 - 验证token保存:", savedToken ? "成功" : "失败");
 
           if (!savedToken) {
-            console.error("登录页面 - token保存失败，请检查存储功能");
             uni.showToast({
               title: "登录成功，但token保存失败",
               icon: "none",
@@ -114,17 +109,15 @@ export default {
 
           // 登录成功，跳转到首页
           uni.switchTab({
-            url: "/pages/index/index",
+            url: "/pages/user/index",
           });
         } else {
-          console.log("登录页面 - 登录失败:", res.message);
           uni.showToast({
             title: res.message || "登录失败",
             icon: "none",
           });
         }
       } catch (error) {
-        console.error("登录页面 - 登录异常:", error);
         uni.showToast({
           title: error.message || "登录失败",
           icon: "none",

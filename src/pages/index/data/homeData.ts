@@ -2,7 +2,7 @@ import { ref } from "vue";
 
 export const recommendList = ref([
   {
-    cover: "/static/images/bamboo1.jpg",
+    cover: "https://bamboo-mini.oss-cn-hangzhou.aliyuncs.com/content/W020241024348368845761_ORIGIN.png",
     title: "竹簧工艺",
     description: "江安竹簧技艺的前世今生",
   },

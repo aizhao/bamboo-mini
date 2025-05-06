@@ -11,9 +11,21 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { historyList, artisticList } from "./data/history";
+import { ref, onMounted } from "vue";
 import MHistoryCard from "./components/m-history-card.vue";
+import { getHistory } from "@/api/history";
+
+const historyList = ref([]);
+const artisticList = ref([]);
+onMounted(() => {
+  init();
+});
+
+const init = async () => {
+  const res = await getHistory();
+  historyList.value = res.data.list.filter(item => item.category !== "教程");
+  artisticList.value = res.data.list.filter(item => item.category === "教程");
+};
 </script>
 
 <style scoped>

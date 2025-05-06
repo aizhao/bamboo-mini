@@ -19,6 +19,18 @@
       }
     },
     {
+      "path": "pages/history/detail",
+      "style": {
+        "navigationBarTitleText": "详情"
+      }
+    },
+    {
+      "path": "pages/register/index",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+    {
       "path": "pages/footprint/index",
       "style": {
         "navigationBarTitleText": "足迹"
