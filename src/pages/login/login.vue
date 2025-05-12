@@ -28,10 +28,8 @@ const loading = ref(false);
 // 检查是否已登录
 onMounted(() => {
   const token = getToken();
-  console.log("登录页面 - 检查token:", token ? "已存在" : "不存在");
 
   if (token) {
-    console.log("登录页面 - 已有token，跳转到首页");
     uni.switchTab({
       url: "/pages/index/index",
     });

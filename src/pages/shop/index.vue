@@ -9,7 +9,7 @@
     <scroll-view scroll-y class="model-list" @scrolltolower="loadMore" refresher-enabled :refresher-triggered="loading" @refresherrefresh="onPullDownRefresh">
       <view class="model-grid">
         <view class="model-item" v-for="model in modelList" :key="model.id" @click="goToDetail(model.id)">
-          <image :src="model.thumbnail_url" mode="aspectFill" class="model-image" />
+          <image :src="model.thumbnail_url" mode="aspectFit" class="model-image" />
           <view class="model-info">
             <text class="model-name">{{ model.name }}</text>
             <text class="model-author">{{ model.author }}</text>

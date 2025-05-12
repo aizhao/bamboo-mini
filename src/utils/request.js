@@ -2,7 +2,7 @@ import { getToken, setToken, removeToken } from "./auth";
 
 // 判断是否为开发环境
 const isDev = process.env.NODE_ENV === "development";
-const baseURL = isDev ? "http://localhost:3000/api" : "https://your-production-api.com/api";
+const baseURL = isDev ? "http://47.108.223.229:80/api" : "https://your-production-api.com/api";
 
 console.log("当前环境:", isDev ? "开发环境" : "生产环境");
 console.log("API基础URL:", baseURL);
@@ -16,7 +16,6 @@ const request = options => {
   return new Promise((resolve, reject) => {
     // 获取token
     const token = getToken();
-    console.log("请求 - 当前token:", token ? "已设置" : "未设置");
 
     // 构建请求头
     const header = {
@@ -26,17 +25,11 @@ const request = options => {
     // 如果有token，添加到请求头
     if (token) {
       header["Authorization"] = `Bearer ${token}`;
-      console.log("请求 - 已添加Authorization头");
     } else {
-      console.log("请求 - 未添加Authorization头，token不存在");
     }
 
     // 构建完整URL
     const url = baseURL + options.url;
-    console.log("请求URL:", url);
-    console.log("请求方法:", options.method || "GET");
-    console.log("请求头:", header);
-    console.log("请求参数:", options.data || options.params);
 
     // 发送请求
     uni.request({
@@ -45,9 +38,6 @@ const request = options => {
       data: options.method === "GET" ? options.params : options.data,
       header,
       success: res => {
-        console.log("响应 - 状态码:", res.statusCode);
-        console.log("响应 - 数据:", res.data);
-
         // 处理响应
         if (res.statusCode >= 200 && res.statusCode < 300) {
           const responseData = res.data;
@@ -55,7 +45,6 @@ const request = options => {
           if (responseData.code === 0) {
             resolve(responseData);
           } else if (responseData.code === 401) {
-            console.log("响应 - 401错误，清除token");
             removeToken();
             uni.showToast({
               title: "登录已过期，请重新登录",
@@ -79,8 +68,7 @@ const request = options => {
           let message = "网络请求失败";
           switch (res.statusCode) {
             case 401:
-              message = "未授权，请重新登录";
-              console.log("响应 - 401错误，清除token");
+              message = "请登录后使用";
               removeToken();
               setTimeout(() => {
                 uni.navigateTo({
