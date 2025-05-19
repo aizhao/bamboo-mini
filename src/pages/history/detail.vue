@@ -2,26 +2,26 @@
   <view class="article-detail">
     <!-- 文章头部 -->
     <view class="article-header">
-      <text class="title">{{ article[0].title }}</text>
+      <text class="title">{{ article[0]?.title }}</text>
       <view class="meta">
         <view class="author">
-          <text class="name">{{ article[0].author }}</text>
+          <text class="name">{{ article[0]?.author }}</text>
         </view>
         <view class="info">
-          <text class="time">{{ article[0].create_time }}</text>
-          <text class="views">{{ article[0].review_comment }} 阅读</text>
+          <text class="time">{{ article[0]?.create_time }}</text>
+          <text class="views">{{ article[0]?.review_comment }} 阅读</text>
         </view>
       </view>
     </view>
 
     <!-- 文章内容 -->
     <view class="article-content">
-      <rich-text :nodes="article[0].content"></rich-text>
+      <rich-text :nodes="article[0]?.content"></rich-text>
     </view>
 
     <!-- 文章图片 -->
-    <view class="article-images" v-if="article[0].cover_image">
-      <image :src="article[0].cover_image" mode="widthFix" class="content-image" @click="previewImage(index)"></image>
+    <view class="article-images" v-if="article[0]?.cover_image">
+      <image :src="article[0]?.cover_image" mode="widthFix" class="content-image" @click="previewImage(index)"></image>
     </view>
 
     <!-- 文章底部 -->
@@ -48,6 +48,7 @@
 </template>
 
 <script setup>
+import { onLoad } from "@dcloudio/uni-app";
 import { ref, onMounted } from "vue";
 import { getHistory } from "@/api/history";
 const article = ref([]);
@@ -62,7 +63,6 @@ const getArticleDetail = async id => {
     const res = await getHistory();
     if (res.data) {
       article.value = res.data.list.filter(item => item.id == id);
-      // console.log(article.value, "9090");
       tagsList.value = article.value[0].tags.split(",");
     }
   } catch (error) {
@@ -99,15 +99,15 @@ const handleShare = () => {
     menus: ["shareAppMessage", "shareTimeline"],
   });
 };
-
-onMounted(() => {
-  const pages = getCurrentPages();
-  const currentPage = pages[pages.length - 1];
-  const id = currentPage.$page?.options?.id;
-
+onLoad(options => {
+  const id = options.id;
   if (id) {
     getArticleDetail(id);
   }
+});
+onMounted(() => {
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1];
 });
 </script>
 

@@ -60,7 +60,7 @@
           </view>
           <view class="detail-item">
             <text class="detail-label">上传时间</text>
-            <text class="detail-value">{{ modelInfo.create_time }}</text>
+            <text class="detail-value">{{ modelInfo.update_time }}</text>
           </view>
         </view>
 
@@ -159,7 +159,7 @@ const fetchModelDetail = async () => {
 
     if (response.code === 0 && response.data) {
       modelInfo.value = response.data;
-      modelInfo.value.create_time = convertUTCToBeijing(modelInfo.value.create_time);
+      modelInfo.value.update_time = convertUTCToBeijing(modelInfo.value.update_time);
       tagsList.value = response.data.tags.split(",");
       // 假设模型图片存储在 thumbnail_url 中
       if (modelInfo.value.images) {

@@ -118,7 +118,8 @@
     {
       "path": "pages/shop/view3d",
       "style": {
-        "navigationBarTitleText": "3d模型"
+        "navigationBarTitleText": "3d模型",
+        "enablePullDownRefresh": false
       }
     }
   ],
