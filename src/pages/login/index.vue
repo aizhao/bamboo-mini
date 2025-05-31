@@ -3,7 +3,7 @@
     <view class="logo">
       <image src="/static/logo.png" mode="aspectFit"></image>
     </view>
-    <view class="title">欢迎使用竹艺商城</view>
+    <view class="title">欢迎使用竹簧宣传小程序</view>
     <view class="subtitle">请登录以继续使用</view>
 
     <!-- 登录表单 -->
@@ -12,7 +12,7 @@
         <input type="text" v-model="form.username" placeholder="请输入账号" class="input" />
       </view>
       <view class="form-item">
-        <input type="password" v-model="form.password" placeholder="请输入密码" class="input" />
+        <input type="safe-password" v-model="form.password" placeholder="请输入密码" class="input" password="true" />
       </view>
     </view>
 

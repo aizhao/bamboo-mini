@@ -102,8 +102,10 @@
 </template>
 
 <script setup>
+import { onShow } from "@dcloudio/uni-app";
 import { ref, onMounted } from "vue";
 import { getDynamic, addComment } from "../../api/dynamic/index";
+import { getToken } from "@/utils/auth";
 
 const moments = ref([]);
 const postContent = ref("");
@@ -112,7 +114,11 @@ const postPopup = ref(null);
 const commentPopup = ref(null);
 const commentContent = ref("");
 const currentDynamicId = ref(null);
-
+onShow(() => {
+  if (getToken) {
+    fetchDynamicList();
+  }
+});
 // 获取动态列表
 const fetchDynamicList = async () => {
   try {

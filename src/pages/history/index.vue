@@ -11,10 +11,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { onLoad, onShow } from "@dcloudio/uni-app";
+import { ref, onMounted, watch } from "vue";
 import MHistoryCard from "./components/m-history-card.vue";
 import { getHistory } from "@/api/history";
-
+import { getToken } from "@/utils/auth";
 const historyList = ref([]);
 const artisticList = ref([]);
 onMounted(() => {
@@ -23,9 +24,18 @@ onMounted(() => {
 
 const init = async () => {
   const res = await getHistory();
+  console.log(res);
   historyList.value = res.data.list.filter(item => item.category !== "教程");
   artisticList.value = res.data.list.filter(item => item.category === "教程");
 };
+onLoad(options => {
+  init();
+});
+onShow(() => {
+  if (getToken) {
+    init();
+  }
+});
 </script>
 
 <style scoped>

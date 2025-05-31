@@ -27,7 +27,7 @@
         <input type="password" v-model="form.password" placeholder="请输入密码" class="input" />
       </view>
       <view class="form-item">
-        <input type="password" v-model="form.confirmPassword" placeholder="请确认密码" class="input" />
+        <input type="safe-password" v-model="form.confirmPassword" placeholder="请确认密码" class="input" password="true" />
       </view>
     </view>
 
@@ -53,7 +53,7 @@ const form = reactive({
   phone: "",
   password: "",
   confirmPassword: "",
-  nickname:""
+  nickname: "",
 });
 
 // 验证码相关
@@ -117,7 +117,7 @@ const startCountdown = () => {
 // 处理注册
 const handleRegister = async () => {
   // 表单验证
-  if (!form.username || !form.phone || !form.password || !form.confirmPassword||!form.nickname) {
+  if (!form.username || !form.phone || !form.password || !form.confirmPassword || !form.nickname) {
     uni.showToast({
       title: "请填写完整信息",
       icon: "none",
@@ -157,7 +157,7 @@ const handleRegister = async () => {
       username: form.username,
       phone: form.phone,
       password: form.password,
-      nickname:form.nickname
+      nickname: form.nickname,
     });
 
     if (res.code === 0) {

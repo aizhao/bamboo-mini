@@ -32,6 +32,7 @@
 </template>
 
 <script setup>
+import { onLoad, onShow } from "@dcloudio/uni-app";
 import { ref, onMounted } from "vue";
 import { getModel3DList } from "@/api/model3d";
 import { getToken } from "@/utils/auth";
@@ -45,7 +46,14 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const hasMore = ref(true);
 const error = ref("");
-
+// onLoad(options => {
+//   fetchModelList();
+// });
+onShow(() => {
+  if (getToken) {
+    fetchModelList();
+  }
+});
 // 检查登录状态
 onMounted(() => {
   // console.log("shop/index.vue - 页面加载完成");
